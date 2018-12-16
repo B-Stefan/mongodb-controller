@@ -3,7 +3,7 @@ import yaml
 from kubernetes import client, config, watch
 import os
 
-DOMAIN = "kool.karmalabs.local"
+DOMAIN = "mongodb-controller.local"
 goodbrands = ['coleclark', 'fender', 'gibson', 'ibanez', 'martin', 'seagull', 'squier', 'washburn']
 badbrands = ['epiphone', 'guild', 'gretsch', 'jackson', 'ovation', 'prs', 'rickenbauer', 'taylor', 'yamaha']
 
@@ -13,7 +13,7 @@ def review_guitar(crds, obj):
     if not metadata:
         print("No metadata in object, skipping: %s" % json.dumps(obj, indent=1))
         return
-    name = metadata.get("name")
+    name = metadata.get("server")
     namespace = metadata.get("namespace")
     obj["spec"]["review"] = True
     brand = obj["spec"]["brand"]
@@ -31,10 +31,10 @@ def review_guitar(crds, obj):
 if __name__ == "__main__":
     if 'KUBERNETES_PORT' in os.environ:
         config.load_incluster_config()
-        definition = '/tmp/guitar.yml'
+        definition = '/tmp/mongo-user.yml'
     else:
         config.load_kube_config()
-        definition = 'guitar.yml'
+        definition = 'mongo-user.yml'
     configuration = client.Configuration()
     configuration.assert_hostname = False
     api_client = client.api_client.ApiClient(configuration=configuration)
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     print("Waiting for Guitars to come up...")
     resource_version = ''
     while True:
-        stream = watch.Watch().stream(crds.list_cluster_custom_object, DOMAIN, "v1", "guitars", resource_version=resource_version)
+        stream = watch.Watch().stream(crds.list_cluster_custom_object, DOMAIN, "v1", "users", resource_version=resource_version)
         for event in stream:
             obj = event["object"]
             operation = event['type']

@@ -1,0 +1,7 @@
+apiVersion: "github.com/B-Stefan/mongodb-controller/v1"
+kind: User
+metadata:
+  name: example-user
+spec:
+  brand: epiphone
+  review: false
