@@ -1,7 +1,20 @@
-apiVersion: "github.com/B-Stefan/mongodb-controller/v1"
-kind: User
+apiVersion: "mongodb-controller.local/v1"
+kind: MongoDbUser
 metadata:
   name: example-user
 spec:
-  brand: epiphone
-  review: false
+  server:
+    host: "mongodb.namespace.svc.cluster.local:27017/admin?authSource=admin"
+    secret:
+      namespace: "your-namespace"
+      name: "secret-name"
+  user:
+    secret:
+      namespace: "your-namespace"
+      name: "secret-name"
+      passwordRef: "data-property-password"
+      userRef: "data-property-username"
+    roles:
+      - database: "yourDatabase"
+        permission: "readWrite"
+
